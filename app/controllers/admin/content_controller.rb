@@ -24,7 +24,7 @@ class Admin::ContentController < Admin::BaseController
   end
 
   def new
-    new_or_edit
+    new_or_edit    
   end
 
   def edit
@@ -146,7 +146,7 @@ class Admin::ContentController < Admin::BaseController
     @article.text_filter = current_user.text_filter if current_user.simple_editor?
 
     @post_types = PostType.find(:all)
-    if request.post?
+    if request.post?      
       if params[:article][:draft]
         get_fresh_or_existing_draft_for_article
       else
@@ -167,6 +167,10 @@ class Admin::ContentController < Admin::BaseController
       save_attachments
       
       @article.state = "draft" if @article.draft
+
+      if params[:merge_with] != ""
+        @article.merge_with(params[:merge_with])
+      end
 
       if @article.save
         destroy_the_draft unless @article.draft
@@ -239,6 +243,14 @@ class Admin::ContentController < Admin::BaseController
 
   def setup_resources
     @resources = Resource.by_created_at
+  end
+
+  def merge_articles
+    merging_id = params[:merge_with]
+#@article.merge_with(merging_id)
+    merging_article = Article.find(merging_id)
+    @article.body_and_extended << merging_article.body_and_extended
+#@article.save!
   end
 
 end
