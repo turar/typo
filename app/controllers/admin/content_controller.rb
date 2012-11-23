@@ -168,7 +168,7 @@ class Admin::ContentController < Admin::BaseController
       
       @article.state = "draft" if @article.draft
 
-      if params[:merge_with] != ""
+      if params[:merge_with] and params[:merge_with] != ""
         @article.merge_with(params[:merge_with])
       end
 
